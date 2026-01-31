@@ -1,0 +1,91 @@
+# Relatório de Implementações de Segurança na AWS
+
+## Introdução
+
+Segurança na nuvem não é um recurso isolado, e sim um conjunto de práticas, controles e serviços que atuam em camadas para reduzir riscos, proteger dados e manter a conformidade. Na AWS, esse modelo é sustentado pelo princípio de responsabilidade compartilhada, em que a AWS cuida da segurança “da nuvem” (infraestrutura física, hipervisores e serviços gerenciados), enquanto o cliente é responsável pela segurança “na nuvem” (configurações, identidades, dados, redes e aplicações).
+
+Este relatório apresenta três tipos de implementações de segurança que podem ser aplicadas em ambientes AWS, organizadas como módulos complementares. Cada módulo descreve objetivos, principais métodos de implementação e boas práticas recomendadas para um cenário profissional.
+
+Os três módulos abordados são: Gestão de Identidades e Acessos, Proteção de Dados e Segurança de Rede e Monitoramento, Detecção e Resposta.
+
+---
+
+## Módulo 1: Gestão de Identidades e Acessos (IAM)
+
+### Objetivo do módulo
+
+Controlar quem pode acessar recursos na AWS, o que pode fazer e sob quais condições. Uma estratégia robusta de identidades reduz o risco de acessos indevidos e limita o impacto de credenciais comprometidas.
+
+### Método de implementação
+
+A implementação começa com a padronização de identidades e a aplicação do princípio do menor privilégio, garantindo que cada usuário, aplicação ou serviço tenha apenas as permissões estritamente necessárias.
+
+### Controles e práticas recomendadas
+
+A base desse módulo é o uso de políticas do IAM bem definidas e segmentadas por função. Em vez de permissões amplas, recomenda-se criar políticas específicas para atividades reais do dia a dia e revisá-las periodicamente. O uso de MFA (autenticação multifator) é essencial, principalmente para usuários com privilégios elevados.
+
+Outra prática fundamental é evitar o uso de credenciais de longo prazo em aplicações. Sempre que possível, utilize credenciais temporárias por meio de roles (funções) e mecanismos de federação. Para organizações que utilizam diretórios corporativos, a federação centraliza o controle e simplifica o ciclo de vida de usuários.
+
+Para ambientes com múltiplas contas, é recomendado adotar governança com múltiplas contas e padronização de permissões, o que reduz o “raio de explosão” de falhas e separa ambientes por criticidade, como desenvolvimento, homologação e produção.
+
+### Resultado esperado
+
+Uma operação mais segura e auditável, com redução significativa de riscos relacionados a credenciais, permissões excessivas e acessos não rastreáveis.
+
+---
+
+## Módulo 2: Proteção de Dados (Criptografia, Chaves e Segredos)
+
+### Objetivo do módulo
+
+Garantir confidencialidade e integridade dos dados em repouso e em trânsito, protegendo informações sensíveis contra vazamentos, interceptações e acessos não autorizados.
+
+### Método de implementação
+
+A implementação é realizada com criptografia padronizada em todos os pontos críticos do ambiente, associada ao gerenciamento centralizado de chaves e ao armazenamento seguro de segredos.
+
+### Controles e práticas recomendadas
+
+Para dados em repouso, a prática recomendada é habilitar criptografia por padrão nos principais serviços de armazenamento e banco de dados, garantindo que dados persistidos estejam protegidos mesmo em cenários de exposição acidental. Para dados em trânsito, deve-se exigir comunicação via TLS/HTTPS entre clientes, aplicações e serviços.
+
+O gerenciamento de chaves deve ser centralizado e controlado com rigor, com rotação periódica, segregação de permissões e auditoria. Além disso, segredos como senhas, tokens e chaves de API não devem ser armazenados em código-fonte, variáveis expostas ou arquivos de configuração sem proteção. O correto é usar serviços dedicados a segredos e integrá-los ao pipeline de implantação, reduzindo a chance de vazamentos em repositórios e logs.
+
+A classificação de dados e a definição de políticas de retenção também fazem parte do módulo. Não basta criptografar; é necessário saber quais dados existem, onde estão, por quanto tempo devem permanecer e quem pode acessá-los.
+
+### Resultado esperado
+
+Proteção consistente de dados, redução de vazamentos por falhas de configuração e maior alinhamento a requisitos de conformidade e auditoria.
+
+---
+
+## Módulo 3: Segurança de Rede e Monitoramento (Detecção e Resposta)
+
+### Objetivo do módulo
+
+Isolar e proteger tráfego de rede, reduzir superfície de ataque e garantir visibilidade contínua do ambiente, permitindo detecção rápida de comportamentos suspeitos e resposta eficiente a incidentes.
+
+### Método de implementação
+
+A implementação combina segmentação de rede, filtragem de tráfego e monitoramento centralizado de eventos e configurações, criando uma postura de segurança proativa.
+
+### Controles e práticas recomendadas
+
+A segurança de rede começa com segmentação por camadas, separando componentes públicos e privados e restringindo comunicações entre serviços ao mínimo necessário. A entrada e saída de tráfego deve ser controlada por regras explícitas, evitando portas abertas sem necessidade e mantendo rastreabilidade de mudanças.
+
+A camada de proteção de borda pode incluir mitigação de ataques comuns, políticas de acesso baseadas em IP e mecanismos de inspeção de tráfego quando aplicável. Para aplicações web, é importante ter proteção contra padrões de ataque conhecidos, como exploração de falhas de injeção, varredura automatizada e tentativas repetidas de acesso.
+
+No monitoramento, o foco é coletar logs e eventos de forma centralizada e acionável. Isso inclui auditoria de ações na conta, registros de acesso a recursos e alertas para alterações críticas de configuração. A estratégia deve contemplar detecção de ameaças, correlação de eventos e resposta guiada por playbooks, com escalonamento e registro de evidências.
+
+Além disso, é recomendável adotar varredura contínua de postura de segurança para identificar configurações inseguras, permissões excessivas e recursos expostos inadvertidamente. Segurança não deve depender apenas de revisões manuais, mas de controles automatizados e alertas.
+
+### Resultado esperado
+
+Maior resiliência contra ataques, redução de exposição e capacidade real de detectar e responder a incidentes com agilidade e evidências confiáveis.
+
+---
+
+## Conclusão
+
+Uma postura de segurança sólida na AWS depende de camadas que se complementam. Gestão de identidades e acessos impede que privilégios indevidos virem porta de entrada. Proteção de dados garante que, mesmo diante de falhas, as informações permaneçam confidenciais. Segurança de rede e monitoramento adicionam barreiras, visibilidade e capacidade de resposta, evitando que incidentes se tornem indisponibilidade, vazamento ou prejuízo operacional.
+
+Ao implementar os três módulos de forma integrada, o ambiente ganha governança, previsibilidade e maturidade, reduzindo riscos e elevando o nível de confiança para operar aplicações e dados críticos na nuvem. A recomendação final é tratar segurança como processo contínuo, com revisão periódica de permissões, políticas de criptografia, segmentação de rede, monitoramento e testes de resposta a incidentes, garantindo evolução constante conforme o ambiente cresce.
